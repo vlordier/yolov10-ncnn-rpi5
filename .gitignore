@@ -1,0 +1,25 @@
+# Build artifacts
+ncnn/
+output/*.onnx
+output/*.pt
+output/*.torchscript.pt
+output/*.ncnn.param
+output/*.ncnn.bin
+output/*.pnnx.param
+output/*.pnnx.bin
+output/*.pnnx.onnx
+output/*_pnnx.py
+output/*_ncnn.py
+output/pnnx.log
+output/*.onnx.data
+
+# Python
+__pycache__/
+*.pyc
+runs/
+
+# RPi build artifacts
+rpi/build/
+
+# macOS
+.DS_Store
