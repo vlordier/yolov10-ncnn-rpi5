@@ -1,3 +1,15 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index c79d779..3f518f1 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -102,6 +102,7 @@ ncnn_add_layer(TanH)
+ ncnn_add_layer(Threshold)
+ ncnn_add_layer(Tile)
+ ncnn_add_layer(TopK)
++ncnn_add_layer(Gather)
+ ncnn_add_layer(RNN)
+ ncnn_add_layer(LSTM)
+ ncnn_add_layer(BinaryOp)
 diff --git a/tools/pnnx/CMakeLists.txt b/tools/pnnx/CMakeLists.txt
 index e50ab47..5b32509 100644
 --- a/tools/pnnx/CMakeLists.txt
@@ -58,10 +70,18 @@ index e50ab47..5b32509 100644
  
  add_subdirectory(src)
 diff --git a/tools/pnnx/src/CMakeLists.txt b/tools/pnnx/src/CMakeLists.txt
-index c554a68..7fb2e44 100644
+index c554a68..15aa16b 100644
 --- a/tools/pnnx/src/CMakeLists.txt
 +++ b/tools/pnnx/src/CMakeLists.txt
-@@ -635,6 +635,15 @@ if(PROTOBUF_FOUND)
+@@ -603,6 +603,7 @@ set(pnnx_pass_ncnn_SRCS
+     pass_ncnn/torch_diag.cpp
+     pass_ncnn/torch_flatten.cpp
+     pass_ncnn/torch_flip.cpp
++    pass_ncnn/torch_gather.cpp
+     pass_ncnn/torch_istft.cpp
+     pass_ncnn/torch_logsumexp.cpp
+     pass_ncnn/torch_matmul.cpp
+@@ -635,6 +636,15 @@ if(PROTOBUF_FOUND)
          add_library(onnxproto STATIC ${ONNX_PROTO_SRCS} ${ONNX_PROTO_HDRS})
          target_include_directories(onnxproto PUBLIC ${PROTOBUF_INCLUDE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
          target_link_libraries(onnxproto PUBLIC ${PROTOBUF_LIBRARIES})
@@ -77,7 +97,7 @@ index c554a68..7fb2e44 100644
      else()
          add_library(onnxproto STATIC onnx-data.proto onnx-ml.proto onnx-operators-ml.proto)
          target_include_directories(onnxproto PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-@@ -674,6 +683,7 @@ set(torch2pnnx_SRCS
+@@ -674,6 +684,7 @@ set(torch2pnnx_SRCS
  add_library(torch2pnnx OBJECT ${torch2pnnx_SRCS})
  target_compile_definitions(torch2pnnx PRIVATE BUILD_TORCH2PNNX)
  target_compile_options(torch2pnnx PUBLIC "${TORCH_CXX_FLAGS}")
@@ -85,7 +105,7 @@ index c554a68..7fb2e44 100644
  
  if(WIN32)
      target_compile_definitions(torch2pnnx PUBLIC NOMINMAX)
-@@ -687,6 +697,10 @@ if(PROTOBUF_FOUND)
+@@ -687,6 +698,10 @@ if(PROTOBUF_FOUND)
      add_library(pnnx2onnx STATIC
          save_onnx.cpp
      )
@@ -96,7 +116,7 @@ index c554a68..7fb2e44 100644
      if(onnxruntime_FOUND)
          target_link_libraries(pnnx2onnx PRIVATE onnxruntime::onnxruntime)
      else()
-@@ -779,12 +793,18 @@ set(pnnx_SRCS
+@@ -779,12 +794,18 @@ set(pnnx_SRCS
  add_executable(pnnx ${pnnx_SRCS})
  
  set_property(SOURCE main.cpp APPEND PROPERTY COMPILE_DEFINITIONS BUILD_TORCH2PNNX)
