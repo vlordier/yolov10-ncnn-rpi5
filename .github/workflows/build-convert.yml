@@ -42,18 +42,23 @@ jobs:
       - name: Convert to NCNN via PNNX
         run: bash scripts/2_pnnx_convert.sh yolov10n
 
-      - name: Verify TopK in output
+      - name: Verify TopK and Gather in output
         run: |
           echo "=== TopK layers ==="
           grep "TopK" output/yolov10n.ncnn.param
+          echo ""
+          echo "=== Gather layers ==="
+          grep "Gather" output/yolov10n.ncnn.param
           echo ""
           echo "=== Model stats ==="
           head -2 output/yolov10n.ncnn.param
           echo ""
           TOPK_COUNT=$(grep -c "TopK" output/yolov10n.ncnn.param)
+          GATHER_COUNT=$(grep -c "Gather" output/yolov10n.ncnn.param)
           echo "TopK layer count: ${TOPK_COUNT}"
-          if [ "${TOPK_COUNT}" -lt 2 ]; then
-            echo "ERROR: Expected at least 2 TopK layers, got ${TOPK_COUNT}"
+          echo "Gather layer count: ${GATHER_COUNT}"
+          if [ "${TOPK_COUNT}" -lt 2 ] || [ "${GATHER_COUNT}" -lt 2 ]; then
+            echo "ERROR: Expected 2 TopK + 2 Gather layers"
             exit 1
           fi
 
