@@ -28,6 +28,13 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq cmake build-essential protobuf-compiler libprotobuf-dev pkg-config
 
+      - name: Clone ncnn fork and apply TopK fix
+        run: |
+          git clone --branch fix-pnnx-onnx-topk-support --depth 1 \
+            https://github.com/vlordier/ncnn.git ncnn
+          cd ncnn
+          git apply ../patches/pnnx-topk-fix.patch
+
       - name: Build ncnn + PNNX
         run: bash scripts/0_setup.sh
 
